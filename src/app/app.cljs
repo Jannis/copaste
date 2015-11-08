@@ -6,6 +6,8 @@
             [app.reconciler :refer [reconciler]]
             [app.components.counter :refer [counter]]))
 
+(enable-console-print!)
+
 (defui App
   static om/IQuery
   (query [this]
@@ -16,7 +18,8 @@
       (dom/h1 #js {:className "title"} "Hello!")
       (counter {:value (:app/counter (om/props this))
                 :increment-fn
-                #(om/transact! this `[(app/increment-counter)])}))))
+                #(om/transact! this `[(app/increment-counter)
+                                      :app/counter])}))))
 
 (defn run []
   (om/add-root! reconciler App (gdom/getElement "app")))

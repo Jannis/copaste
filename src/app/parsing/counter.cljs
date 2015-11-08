@@ -3,9 +3,12 @@
 
 (defmethod read :app/counter
   [{:keys [state]} key _]
-  {:value (or (get @state key) 0)})
+  (println "read :app/counter" "local state:" @state)
+  {:value (or (get @state key) 0)
+   :remote true})
 
 (defmethod mutate 'app/increment-counter
   [{:keys [state]} _ _]
   {:value [:app/counter]
-   :action #(swap! state update :app/counter inc)})
+   :remote true})
+   ;:action #(swap! state update :app/counter inc)})
