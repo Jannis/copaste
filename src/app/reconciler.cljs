@@ -34,4 +34,5 @@
   (om/reconciler {:state initial-state
                   :parser parser
                   :send send
-                  :merge-tree merge-result-tree}))
+                  :merge-tree merge-result-tree
+                  :migrate om/default-migrate}))

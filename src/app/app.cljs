@@ -36,19 +36,20 @@
     (om/transact! this (txbind this `[(app/toggle-expanded {:ident ~ident})])))
 
   (create-snippet [this]
-    (om/transact! this (txbind this `[(app/create-snippet)
+    (om/transact! this (txbind this `[(copaste/create-snippet)
                                       (app/edit-snippet {:edit true})])))
 
-  (update-snippet [this props]
-    (om/transact! this `[(app/update-snippet {:props ~props})]))
+  (update-snippet [this ident props]
+    (om/transact! this `[(app/update-snippet {:ident ~ident :props ~props})]))
 
-  (save-snippet [this]
+  (save-snippet [this ident]
+    (println "save-snippet" ident)
     (let [ref (:app/ref (om/props this))
-          snippet (:app/snippet (om/props this))]
+          snippet (->> (:copaste/snippets (om/props this))
+                       (filter #(= (second ident) (:uuid %)))
+                       (first))]
       (om/transact!
         this (txbind this `[(copaste/save-snippet {:ref ~ref :snippet ~snippet})
-                            (app/set-snippet {:ident nil})
-                            (app/edit-snippet {:edit false})
                             :copaste/refs
                             :copaste/snippets]))))
 
@@ -80,7 +81,9 @@
           (snippet-list
             (om/computed {:snippets snippets}
                          {:toggle-fn #(.toggle-expanded this %)
-                          :create-fn #(.create-snippet this %)})))))))
+                          :create-fn #(.create-snippet this %)
+                          :update-fn #(.update-snippet this %1 %2)
+                          :save-fn #(.save-snippet this %1)})))))))
         ; (when-let [sn (:app/snippet (om/props this))]
         ;   (println "SN" sn)
         ;   (if-let [edit (:app/edit-snippet (om/props this))]

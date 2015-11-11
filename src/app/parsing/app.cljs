@@ -3,7 +3,7 @@
             [app.reconciler :refer [mutate read]]))
 
 (defmethod read :app/ref
-  [{:keys [state selector]} key _]
+  [{:keys [state]} key _]
   (let [st @state]
     {:value (some->> key (get st) (get-in st))}))
 
@@ -31,19 +31,19 @@
   {:value {:keys [:copaste/snippets]}
    :action #(swap! state update-in (conj ident :app/expanded) not)})
 
-(defmethod mutate 'app/create-snippet
-  [{:keys [state]} _ _]
-  {:value {:keys [:app/snippet :app/edit-snippet]}
-   :action
-   (fn []
-     (swap! state (fn [st] (-> st
-                               (assoc :app/snippet {:uuid nil})
-                               (assoc :app/edit-snippet true)))))})
+; (defmethod mutate 'app/create-snippet
+;   [{:keys [state]} _ _]
+;   {:value {:keys [:app/snippet :app/edit-snippet]}
+;    :action
+;    (fn []
+;      (swap! state (fn [st] (-> st
+;                                (assoc :app/snippet {:uuid nil})
+;                                (assoc :app/edit-snippet true)))))})
 
 (defmethod mutate 'app/update-snippet
-  [{:keys [state]} _ {:keys [props]}]
-  {:value {:keys [:app/snippet]}
-   :action #(swap! state update :app/snippet merge props)})
+  [{:keys [state]} _ {:keys [ident props]}]
+  {:value {:keys [ident]}
+   :action #(swap! state update-in ident merge props)})
 
 (defmethod read :app/edit-snippet
   [{:keys [state]} key _]

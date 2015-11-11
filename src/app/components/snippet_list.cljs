@@ -7,7 +7,8 @@
   Object
   (render [this]
     (let [{:keys [snippets]} (om/props this)
-          {:keys [toggle-fn create-fn]} (om/get-computed this)]
+          {:keys [toggle-fn create-fn update-fn save-fn]}
+            (om/get-computed this)]
       (dom/div #js {:className "snippet-list"}
         (dom/h2 #js {:className "snippet-list-title"}
           (dom/span #js {:className "snippet-list-title-text"} "Snippets")
@@ -16,6 +17,8 @@
                              :onClick #(when create-fn (create-fn))}
               "+ Create")))
         (for [sn snippets]
-          (snippet (om/computed sn {:toggle-fn toggle-fn})))))))
+          (snippet (om/computed sn {:toggle-fn toggle-fn
+                                    :update-fn update-fn
+                                    :save-fn save-fn})))))))
 
 (def snippet-list (om/factory SnippetList))
