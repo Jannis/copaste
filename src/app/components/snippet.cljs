@@ -151,7 +151,7 @@
     [:snippet/by-uuid (:uuid props)])
   static om/IQuery
   (query [this]
-    [:uuid :property/title :property/code :app/expanded])
+    [:uuid :property/title :property/code :app/expanded :app/editing])
   Object
   (highlight [this]
     (go
@@ -163,17 +163,42 @@
     (.highlight this))
   (render [this]
     (println "Render Snippet" (:uuid (om/props this)))
-    (let [{:keys [uuid property/title property/code :app/expanded]}
-            (om/props this)
+    (let [{:keys [uuid property/title property/code]} (om/props this)
+          {:keys [app/editing app/expanded]} (om/props this)
           {:keys [toggle-fn save-fn update-fn]} (om/get-computed this)]
       (dom/div #js {:className "snippet"}
         (dom/div #js {:className "snippet-header"
                       :onClick #(when toggle-fn
                                   (toggle-fn (om/get-ident this)))}
-          (dom/span #js {:className "snippet-id"} (subs uuid 0 8))
-          (dom/span #js {:className "snippet-title"} title))
-        (when expanded
-          (dom/pre #js {:className "snippet-code"}
-            (dom/code #js {:ref :code} code)))))))
+          (dom/span #js {:className "snippet-id"}
+            (when (string? uuid) (subs uuid 0 8)))
+          (if editing
+            (dom/input #js {:className "snippet-title-input"
+                            :value title
+                            :onChange
+                            (fn [e]
+                              (when update-fn
+                                (let [title (.. e -target -value)]
+                                  (update-fn (om/get-ident this)
+                                             {:property/title title})))
+                              (.preventDefault e))})
+            (dom/span #js {:className "snippet-title"} title)))
+        (if editing
+          (dom/div #js {:className "snippet-form"}
+            (dom/textarea #js {:className "snippet-code-input"
+                               :onChange
+                               (fn [e]
+                                 (when update-fn
+                                   (let [code (.. e -target -value)]
+                                     (update-fn (om/get-ident this)
+                                                {:property/code code}))))})
+            (dom/div #js {:className "snippet-code-buttons"}
+              (dom/button #js {:className "snippet-code-button"
+                               :onClick #(when save-fn
+                                           (save-fn (om/get-ident this)))}
+                "Save")))
+          (when expanded
+            (dom/pre #js {:className "snippet-code"}
+              (dom/code #js {:ref :code} code))))))))
 
 (def snippet (om/factory Snippet {:keyfn :uuid}))
