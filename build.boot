@@ -26,7 +26,7 @@
                   [cljs-ajax "0.5.1"]
                   [cljsjs/highlight "8.4-0"]
                   [org.clojure/clojurescript "1.7.170"]
-                  [org.omcljs/om "1.0.0-alpha19-SNAPSHOT"]
+                  [org.omcljs/om "1.0.0-alpha20-SNAPSHOT"]
 
                   ; Other dependencies
                   [devcards "0.2.0-8"]])
