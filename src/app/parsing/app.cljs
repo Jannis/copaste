@@ -26,6 +26,11 @@
                     (let [snippet (if ident (get-in st ident) nil)]
                       (assoc st :app/snippet snippet)))))})
 
+(defmethod mutate 'app/toggle-expanded
+  [{:keys [state]} _ {:keys [ident]}]
+  {:value [:copaste/snippets]
+   :action #(swap! state update-in (conj ident :app/expanded) not)})
+
 (defmethod mutate 'app/create-snippet
   [{:keys [state]} _ _]
   {:value [:app/snippet :app/edit-snippet]

@@ -5,9 +5,8 @@
             [app.parsing.app]
             [app.parsing.copaste]
             [app.reconciler :refer [reconciler]]
-            [app.components.snippet :refer [Snippet snippet]]
-            [app.components.snippet-editor :refer [SnippetEditor snippet-editor]]
-            [app.components.snippet-list :refer [SnippetListItem snippet-list]]
+            [app.components.snippet :refer [Snippet]]
+            [app.components.snippet-list :refer [snippet-list]]
             [app.components.refs-menu :refer [RefMenuItem refs-menu]]
             [app.queries :refer [txbind]]))
 
@@ -21,9 +20,6 @@
   (query [this]
     `[:app/ref
       {:copaste/refs ~(om/get-query RefMenuItem)}
-      :app/edit-snippet
-      {:app/snippet ~(om/get-query Snippet)}
-      {:app/snippet ~(om/get-query SnippetEditor)}
       ({:copaste/snippets ~(om/get-query Snippet)} {:ref ?ref})])
   Object
   (activate-ref [this ident]
@@ -37,6 +33,10 @@
 
   (set-snippet [this ident]
     (om/transact! this `[(app/set-snippet {:ident ~ident})]))
+
+  (toggle-expanded [this ident]
+    (om/transact! this (txbind this `[(app/toggle-expanded {:ident ~ident})
+                                      :copaste/snippets])))
 
   (create-snippet [this]
     (om/transact! this (txbind this `[(app/create-snippet)
@@ -82,16 +82,16 @@
         (let [snippets (:copaste/snippets (om/props this))]
           (snippet-list
             (om/computed {:snippets snippets}
-                         {:activate-fn #(.set-snippet this %)
-                          :create-fn #(.create-snippet this %)})))
-        (when-let [sn (:app/snippet (om/props this))]
-          (println "SN" sn)
-          (if-let [edit (:app/edit-snippet (om/props this))]
-            (snippet-editor
-              (om/computed sn
-                           {:save-fn #(.save-snippet this)
-                            :update-fn #(.update-snippet this %)}))
-            (snippet sn)))))))
+                         {:toggle-fn #(.toggle-expanded this %)
+                          :create-fn #(.create-snippet this %)})))))))
+        ; (when-let [sn (:app/snippet (om/props this))]
+        ;   (println "SN" sn)
+        ;   (if-let [edit (:app/edit-snippet (om/props this))]
+        ;     (snippet-editor
+        ;       (om/computed sn
+        ;                    {:save-fn #(.save-snippet this)
+        ;                     :update-fn #(.update-snippet this %)}))
+        ;     (snippet sn)))))))
 
 
 (defn run []

@@ -16,9 +16,8 @@
 
 (defmethod read :copaste/snippets
   [{:keys [state selector]} key _]
-  (let [st @state]
-    {:value (om/db->tree selector (get st key) st)
-     :remote true}))
+  {:value (let [st @state] (om/db->tree selector (get st key) st))
+   :remote true})
 
 (defmethod mutate 'copaste/save-snippet
  [{:keys [state]} _ {:keys [ref snippet]}]

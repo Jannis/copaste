@@ -121,17 +121,41 @@
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]))
 
+; (defui Snippet
+;   static om/Ident
+;   (ident [this props]
+;     [:snippet/by-uuid (:uuid props)])
+;   static om/IQuery
+;   (query [this]
+;     [:uuid :app/expanded :property/title :property/code])
+;   Object
+;   (render [this]
+;     (println "Render Snippet" (:uuid (om/props this)) (:app/expanded (om/props this)))
+;     (let [{:keys [uuid app/expanded property/title]} (om/props this)
+;           {:keys [toggle-fn]} (om/get-computed this)]
+;       (dom/div #js {:className "snippet"
+;                     :onClick #(when toggle-fn
+;                                 (toggle-fn (om/get-ident this)))}
+;         (dom/div #js {:className "snippet-header"}
+;           (dom/span #js {:className "snippet-id"} (subs uuid 0 8))
+;           (dom/span #js {:className "snippet-title"} title))
+;         (dom/div #js {:className" snippet-snippet"}
+;           (if expanded
+;             (snippet (om/computed (om/props this) {}))))))))
+;
+; (def snippet (om/factory Snippet {:keyfn :uuid}))
+
 (defui Snippet
   static om/Ident
   (ident [this props]
     [:snippet/by-uuid (:uuid props)])
   static om/IQuery
   (query [this]
-    [:uuid :property/title :property/code])
+    [:uuid :property/title :property/code :app/expanded])
   Object
   (highlight [this]
     (go
-      (let [code (om/react-ref this :code)]
+      (if-let [code (om/react-ref this :code)]
         (.. js/hljs (highlightBlock code)))))
   (componentDidMount [this]
     (.highlight this))
@@ -139,11 +163,17 @@
     (.highlight this))
   (render [this]
     (println "Render Snippet" (:uuid (om/props this)))
-    (let [{:keys [property/title property/code]} (om/props this)
-          {:keys [save-fn update-fn]} (om/get-computed this)]
+    (let [{:keys [uuid property/title property/code :app/expanded]}
+            (om/props this)
+          {:keys [toggle-fn save-fn update-fn]} (om/get-computed this)]
       (dom/div #js {:className "snippet"}
-        (dom/h2 #js {:className "snippet-title"} (str "Snippet: " title))
-        (dom/pre #js {:className "snippet-code"}
-          (dom/code #js {:ref :code} code))))))
+        (dom/div #js {:className "snippet-header"
+                      :onClick #(when toggle-fn
+                                  (toggle-fn (om/get-ident this)))}
+          (dom/span #js {:className "snippet-id"} (subs uuid 0 8))
+          (dom/span #js {:className "snippet-title"} title))
+        (when expanded
+          (dom/pre #js {:className "snippet-code"}
+            (dom/code #js {:ref :code} code)))))))
 
 (def snippet (om/factory Snippet {:keyfn :uuid}))

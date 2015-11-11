@@ -15,6 +15,19 @@
 (defn send-error-handler [merge-fn error]
   (println "<<" "error" error))
 
+(defmulti merge-subtree (fn [a [k v]] k))
+
+(defmethod merge-subtree :snippet/by-uuid
+  [res [k v]]
+  (merge-with #(merge-with merge %1 %2) res {k v}))
+
+(defmethod merge-subtree :default
+  [res [k v]]
+  (om/default-merge-tree res {k v}))
+
+(defn merge-tree [a b]
+  (reduce merge-subtree a b))
+
 (defn send [reqs merge-fn]
   (let [query (:remote reqs)]
     (println ">>" query)
@@ -29,4 +42,5 @@
 (def reconciler
   (om/reconciler {:state initial-state
                   :parser parser
-                  :send send}))
+                  :send send
+                  :merge-tree merge-tree}))

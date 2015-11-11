@@ -128,44 +128,35 @@ html, body {
       &:extend(.button all);
     }
   }
-
-  .snippet-list-item {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    cursor: pointer;
-    border-bottom: thin solid darken(@white, 5%);
-
-    &:hover {
-      box-shadow: inset 0px -2px 1px 0px darken(@white, 5%);
-    }
-
-    .snippet-list-item-id {
-      display: table-cell;
-      box-sizing: border-box;
-      width: 8rem;
-      padding: 1rem 1rem;
-    }
-
-    .snippet-list-item-title {
-      display: table-cell;
-    }
-  }
-}
-
-.snippet-editor {
-  .snippet-editor-form {
-    padding: 1rem;
-  }
 }
 
 .snippet {
+  border-bottom: thin solid darken(@white, 5%);
+
+  &:hover {
+    box-shadow: inset 0px -2px 1px 0px darken(@white, 5%);
+  }
+
+  .snippet-header {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .snippet-id {
+    display: table-cell;
+    box-sizing: border-box;
+    width: 8rem;
+    padding: 1rem 1rem;
+  }
+
   .snippet-title {
+    display: table-cell;
+    box-sizing: border-box;
     margin: 0;
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    background: @blue;
-    color: @white;
   }
 
   .snippet-code {
