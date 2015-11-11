@@ -74,7 +74,8 @@
 
 (defmethod mutatef 'copaste/save-snippet
   [{:keys [consonant]} _ {:keys [ref snippet]}]
-  {:value [:copaste/refs :copaste/snippets]
+  {:value {:keys [:copaste/refs :copaste/snippets]
+           :tempids {}}
    :action (fn []
              (let [ref (if ref ref (s/get-ref consonant "HEAD"))
                    snippet (om->object snippet)]

@@ -21,5 +21,5 @@
 
 (defmethod mutate 'copaste/save-snippet
  [{:keys [state]} _ {:keys [ref snippet]}]
- {:value [:copaste/refs :copaste/snippets]
+ {:value {:keys [:copaste/refs :copaste/snippets]}
   :remote true})

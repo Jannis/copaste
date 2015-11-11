@@ -9,7 +9,7 @@
 
 (defmethod mutate 'app/set-ref
   [{:keys [state]} _ {:keys [ident]}]
-  {:value [:app/ref]
+  {:value {:keys [:app/ref]}
    :action #(swap! state assoc :app/ref ident)})
 
 (defmethod read :app/snippet
@@ -19,7 +19,7 @@
 
 (defmethod mutate 'app/set-snippet
   [{:keys [state]} _ {:keys [ident]}]
-  {:value [:app/snippet]
+  {:value {:keys [:app/snippet]}
    :action
    (fn []
      (swap! state (fn [st]
@@ -28,12 +28,12 @@
 
 (defmethod mutate 'app/toggle-expanded
   [{:keys [state]} _ {:keys [ident]}]
-  {:value [:copaste/snippets]
+  {:value {:keys [:copaste/snippets]}
    :action #(swap! state update-in (conj ident :app/expanded) not)})
 
 (defmethod mutate 'app/create-snippet
   [{:keys [state]} _ _]
-  {:value [:app/snippet :app/edit-snippet]
+  {:value {:keys [:app/snippet :app/edit-snippet]}
    :action
    (fn []
      (swap! state (fn [st] (-> st
@@ -42,7 +42,7 @@
 
 (defmethod mutate 'app/update-snippet
   [{:keys [state]} _ {:keys [props]}]
-  {:value [:app/snippet]
+  {:value {:keys [:app/snippet]}
    :action #(swap! state update :app/snippet merge props)})
 
 (defmethod read :app/edit-snippet
@@ -52,5 +52,5 @@
 
 (defmethod mutate 'app/edit-snippet
   [{:keys [state]} _ {:keys [edit]}]
-  {:value [:app/edit-snippet]
+  {:value {:keys [:app/edit-snippet]}
    :action #(swap! state assoc :app/edit-snippet (or edit false))})
