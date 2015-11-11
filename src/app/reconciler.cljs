@@ -8,18 +8,20 @@
 (defmulti mutate om/dispatch)
 
 (defn send-completed-handler [merge-fn results]
-  (println "results" results)
+  (println "<<" results)
   (merge-fn results))
+  ; (println "copaste" (om/app-state reconciler)))
 
 (defn send-error-handler [merge-fn error]
-  (println "error" error))
+  (println "<<" "error" error))
 
 (defn send [reqs merge-fn]
   (let [query (:remote reqs)]
+    (println ">>" query)
     (POST "http://localhost:3001/query"
           {:params query
-           :handler (partial send-completed-handler merge-fn)
-           :error-handler (partial send-error-handler merge-fn)})))
+           :handler #(send-completed-handler merge-fn %)
+           :error-handler #(send-error-handler merge-fn %)})))
 
 (def parser
   (om/parser {:read read :mutate mutate}))

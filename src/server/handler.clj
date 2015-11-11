@@ -4,8 +4,10 @@
             [ring.util.response :refer [response header]]
             [ring.middleware.format-params :refer [wrap-transit-json-params]]
             [ring.middleware.format-response :refer [wrap-transit-json-response]]
+            [reloaded.repl :refer [system]]
             [server.middleware :refer [wrap-access-headers]]
-            [server.parser :refer [parser]]))
+            [server.parser :refer [parser]]
+            [server.parsing.copaste]))
 
 ;;;; App server
 
@@ -18,10 +20,11 @@
 
 ;;;; Backend server
 
-(defonce server-state (atom {:app/counter 0}))
-
 (defn handle-query [params]
-  (response (parser {:state server-state} params)))
+  (println "<<" params)
+  (let [ret (parser {:consonant (:consonant system)} params)]
+    (println ">>" ret)
+    (response ret)))
 
 (defroutes backend-routes
   (OPTIONS "/query" {params :body-params} (handle-query params))

@@ -1,3 +1,3 @@
 (ns app.state)
 
-(def initial-state {})
+(defonce initial-state {})

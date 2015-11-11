@@ -1,5 +1,252 @@
+@white: #ffffff;
+@black: #222222;
+@blue:  #00b8d4;
+
+html, body {
+  padding: 0;
+  margin: 0;
+  background: @white;
+}
+
 .app {
-  .title {
-    color: green;
+  font-family: "Droid Sans";
+  color: @black;
+  background: @white;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  align-content: stretch;
+  padding: 0 0.5rem 0 0.5rem;
+
+  .header-title {
+    margin: 0;
+    font-size: 2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+
+    &:hover a {
+      text-shadow: 0px 0px 1px @white;
+    }
+  }
+
+  .header-subtitle {
+    font-size: 1rem;
+    font-weight: normal;
+    display: block;
+  }
+
+  .header-nav {
+    align-self: stretch;
+    display: flex;
+  }
+
+  .header-menu {
+    align-self: flex-end;
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    a {
+      display: inline-block;
+      padding: 0.5rem;
+    }
+
+    ul {
+      position: absolute;
+      opacity: 0;
+      top: 100%;
+      right: 9999px;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      transition: opacity 0.25s ease-in;
+
+      .header-menu-separator {
+        border-top: thin solid @white;
+      }
+
+      a {
+        display: block;
+        padding: 0.5rem;
+
+        &:hover {
+          text-shadow: 0px 0px 1px @white;
+        }
+      }
+    }
+
+    &:hover {
+      a {
+        background: #000;
+      }
+
+      ul {
+        right: 0;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.main {
+  margin-top: 1rem;
+}
+
+.ref-header {
+  margin: 0rem 1rem 1rem 1rem;
+}
+
+.snippet-list {
+  margin: 0;
+
+  .snippet-list-title {
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    background: @blue;
+    color: @white;
+    display: table;
+    font-size: 1rem;
+    margin: 0;
+    width: 100%;
+
+    .snippet-list-title-text {
+      display: table-cell;
+    }
+
+    .snippet-list-title-buttons {
+      display: table-cell;
+      text-align: right;
+    }
+
+    .snippet-list-title-button {
+      &:extend(.button all);
+    }
+  }
+
+  .snippet-list-item {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    cursor: pointer;
+    border-bottom: thin solid darken(@white, 5%);
+
+    &:hover {
+      box-shadow: inset 0px -2px 1px 0px darken(@white, 5%);
+    }
+
+    .snippet-list-item-id {
+      display: table-cell;
+      box-sizing: border-box;
+      width: 8rem;
+      padding: 1rem 1rem;
+    }
+
+    .snippet-list-item-title {
+      display: table-cell;
+    }
+  }
+}
+
+.snippet-editor {
+  .snippet-editor-form {
+    padding: 1rem;
+  }
+}
+
+.snippet {
+  .snippet-title {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background: @blue;
+    color: @white;
+  }
+
+  .snippet-code {
+    margin: 0;
+    padding: 1rem 1rem 3rem 1rem;
+    background: #f8f8f8;
+
+    code {
+      padding: 0;
+      transition: all 0.1s ease-in;
+    }
+  }
+}
+
+.button {
+  background: @blue;
+  border: thin solid lighten(@blue, 5%);
+  box-shadow: 0px 0px 2px 0px darken(@blue, 15%);
+  border-radius: 0.25rem;
+  color: @white;
+  padding: 0.5rem;
+  outline: none;
+  transition: all 0.1s ease-in;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 300;
+
+  &:hover {
+    background: darken(@blue, 2%);
+  }
+
+  &:active {
+    background: darken(@blue, 10%);
+  }
+}
+
+.form {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  box-sizing: border-box;
+
+  .form-row {
+    display: table-row;
+    height: 3.5rem;
+
+    .form-label {
+      display: table-cell;
+      box-sizing: border-box;
+      width: 10%;
+      vertical-align: top;
+      padding: 0.5rem 1rem 0.5rem 0rem;
+    }
+
+    .form-input {
+      display: table-cell;
+      box-sizing: border-box;
+      width: 100%;
+      vertical-align: top;
+      padding: 0.5rem;
+      font: inherit;
+      background: darken(@black, 2%);
+      color: @white;
+      border: thin solid lighten(@black, 10%);
+      outline: none;
+    }
+
+    textarea.form-input {
+      font-family: "Droid Sans Mono", monospace;
+      height: 20rem;
+    }
+
+    .form-buttons {
+      display: table-cell;
+      text-align: right;
+      width: 100%;
+      padding: 1rem 0rem 0rem 0rem;
+
+      .form-button {
+        &:extend(.button all);
+      }
+    }
   }
 }

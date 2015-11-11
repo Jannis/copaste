@@ -5,10 +5,17 @@
   :resource-paths #{"html" "less" "resources" "src"}
   :dependencies '[; Boot setup
                   [adzerk/boot-cljs "1.7.170-1"]
+                  [adzerk/boot-cljs-repl "0.3.0"]
                   [adzerk/boot-reload "0.4.1"]
                   [deraen/boot-less "0.4.2"]
 
+                  ; boot-cljs-repl dependencies
+                  [com.cemerick/piggieback "0.2.1"]
+                  [weasel "0.7.0"]
+                  [org.clojure/tools.nrepl "0.2.12"]
+
                   ; Server dependencies
+                  [clj-consonant "0.1.0-SNAPSHOT"]
                   [compojure "1.4.0"]
                   [http-kit "2.1.19"]
                   [org.clojure/tools.reader "1.0.0-alpha1"]
@@ -17,6 +24,7 @@
 
                   ; App dependencies
                   [cljs-ajax "0.5.1"]
+                  [cljsjs/highlight "8.4-0"]
                   [org.clojure/clojurescript "1.7.170"]
                   [org.omcljs/om "1.0.0-alpha19-SNAPSHOT"]
 
@@ -28,6 +36,7 @@
        :version "0.1.0-SNAPSHOT"})
 
 (require '[adzerk.boot-cljs :refer [cljs]]
+         '[adzerk.boot-cljs-repl :refer [cljs-repl start-repl]]
          '[adzerk.boot-reload :refer [reload]]
          '[deraen.boot-less :refer [less]]
          '[reloaded.repl :refer [init start stop go reset]]
@@ -38,6 +47,7 @@
   []
   (comp
     (less)
+    (sift :add-jar {'cljsjs/highlight #"^cljsjs/common/highlight/github.min.css"})
     (cljs :source-map true
           :optimizations :none
           :compiler-options {:devcards true})))
@@ -51,6 +61,7 @@
             :hot-reload true
             :files ["handler.clj"])
     (reload :on-jsload 'app.app/run)
+    (cljs-repl)
     (build-development)
     (repl :server true)))
 
@@ -66,6 +77,7 @@
   (comp
     (watch)
     (reload :on-jsload 'app.app/run)
+    (cljs-repl)
     (build-production)
     (run :main-namespace "server.core" :arguments [#'production-system])
     (wait)))
