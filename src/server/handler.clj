@@ -1,6 +1,9 @@
 (ns server.handler
-  (:require [compojure.core :refer [defroutes OPTIONS POST]]
+  (:import [java.io ByteArrayOutputStream])
+  (:require [cognitect.transit :as transit]
+            [compojure.core :refer [defroutes OPTIONS POST]]
             [compojure.route :as route]
+            [om.next.server :as om]
             [ring.util.response :refer [response header]]
             [ring.middleware.format-params :refer [wrap-transit-json-params]]
             [ring.middleware.format-response :refer [wrap-transit-json-response]]
@@ -31,8 +34,20 @@
   (POST    "/query" {params :body-params} (handle-query params))
   (route/not-found "Not found"))
 
+(defn make-om-transit-decoder []
+  (fn [in]
+    (transit/read (om/reader in))))
+
+(defn make-om-transit-encoder []
+  (fn [in]
+    (let [out (ByteArrayOutputStream.)]
+      (transit/write (om/writer out) in)
+      (.toByteArray out))))
+
 (def backend-server
   (-> backend-routes
       (wrap-access-headers)
-      (wrap-transit-json-params)
-      (wrap-transit-json-response :options {:verbose true})))
+      (wrap-transit-json-params :decoder (make-om-transit-decoder)
+                                :options {:verbose true})
+      (wrap-transit-json-response :encoder (make-om-transit-encoder)
+                                  :options {:verbose true})))

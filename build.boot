@@ -16,6 +16,7 @@
 
                   ; Server dependencies
                   [clj-consonant "0.1.0-SNAPSHOT"]
+                  [com.cognitect/transit-clj "0.8.285"]
                   [compojure "1.4.0"]
                   [http-kit "2.1.19"]
                   [org.clojure/tools.reader "1.0.0-alpha1"]
@@ -26,7 +27,7 @@
                   [cljs-ajax "0.5.1"]
                   [cljsjs/highlight "8.4-0"]
                   [org.clojure/clojurescript "1.7.170"]
-                  [org.omcljs/om "1.0.0-alpha20-SNAPSHOT"]
+                  [org.omcljs/om "1.0.0-alpha21-SNAPSHOT"]
 
                   ; Other dependencies
                   [devcards "0.2.0-8"]])

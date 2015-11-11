@@ -1,6 +1,7 @@
 (ns app.reconciler
   (:require [ajax.core :refer [POST]]
             [om.next :as om]
+            [om.transit :as om-transit]
             [app.queries :refer [merge-result-tree]]
             [app.state :refer [initial-state]]))
 
@@ -21,6 +22,8 @@
     (println ">>" query)
     (POST "http://localhost:3001/query"
           {:params query
+           :reader (om-transit/reader)
+           :writer (om-transit/writer)
            :handler #(send-completed-handler merge-fn %)
            :error-handler #(send-error-handler merge-fn %)})))
 
