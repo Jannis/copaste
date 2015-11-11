@@ -35,8 +35,7 @@
     (om/transact! this `[(app/set-snippet {:ident ~ident})]))
 
   (toggle-expanded [this ident]
-    (om/transact! this (txbind this `[(app/toggle-expanded {:ident ~ident})
-                                      :copaste/snippets])))
+    (om/transact! this (txbind this `[(app/toggle-expanded {:ident ~ident})])))
 
   (create-snippet [this]
     (om/transact! this (txbind this `[(app/create-snippet)
