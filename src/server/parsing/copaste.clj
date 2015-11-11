@@ -1,4 +1,5 @@
 (ns server.parsing.copaste
+  (:import [om.tempid TempId])
   (:require [clj-consonant.store :as s]
             [server.parser :refer [mutatef readf]]
             [server.transaction :as t]))
@@ -39,17 +40,17 @@
 ;;;; Reads
 
 (defmethod readf :copaste/refs
-  [{:keys [consonant selector]} _ _]
+  [{:keys [consonant query]} _ _]
   {:value (->> (s/get-refs consonant)
                vals
-               (map #(select-keys % selector))
+               (map #(select-keys % query))
                (into []))})
 
 (defmethod readf :copaste/snippets
-  [{:keys [consonant selector]} _ {:keys [ref]}]
+  [{:keys [consonant query]} _ {:keys [ref]}]
   {:value (->> (s/get-objects consonant (second ref) "snippet")
                (map object->om)
-               (map #(select-keys % selector))
+               (map #(select-keys % query))
                (into []))})
 
 ;;;; Mutations
@@ -66,7 +67,9 @@
 (defn create-snippet [consonant ref snippet]
   (t/transact! consonant
     (-> (t/begin :source (some-> ref :head :sha1))
-        (t/create :class "snippet" :properties (:properties snippet))
+        (t/create :class "snippet"
+                  :uuid (:uuid snippet)
+                  :properties (:properties snippet))
         (t/commit :target (if ref (:name ref) "HEAD")
                   :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
                   :committer {:name "copaste" :email "copaste@copaste.org"}
@@ -74,11 +77,17 @@
 
 (defmethod mutatef 'copaste/save-snippet
   [{:keys [consonant]} _ {:keys [ref snippet]}]
-  {:value {:keys [:copaste/refs :copaste/snippets]
-           :tempids {}}
-   :action (fn []
-             (let [ref (if ref ref (s/get-ref consonant "HEAD"))
-                   snippet (om->object snippet)]
-               (if (:uuid snippet)
-                 (update-snippet consonant ref snippet)
-                 (create-snippet consonant ref snippet))))})
+  (let [snippet (om->object snippet)
+        uuid (:uuid snippet)
+        real-uuid (cond-> uuid(instance? TempId uuid) (-> :id str))]
+    (println "uuid" uuid)
+    (println "real-uuid" real-uuid)
+    {:value {:keys [:copaste/refs :copaste/snippets]
+             :tempids {[:snippet/by-uuid uuid]
+                       [:snippet/by-uuid real-uuid]}}
+     :action
+     (fn []
+       (let [ref (if ref ref (s/get-ref consonant "HEAD"))]
+         (if (= uuid real-uuid)
+           (update-snippet consonant ref snippet)
+           (create-snippet consonant ref (assoc snippet :uuid real-uuid)))))}))
