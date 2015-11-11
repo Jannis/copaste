@@ -25,3 +25,10 @@
       (into []
         (map #(resolve-read cq %))
         tx))))
+
+(defn merge-result-tree [a b]
+  (letfn [(merge-tree [a b]
+            (if (and (map? a) (map? b))
+              (merge-with #(merge-tree %1 %2) a b)
+              b))]
+    (merge-tree a b)))
