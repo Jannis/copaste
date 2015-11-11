@@ -10,8 +10,6 @@
             [app.components.refs-menu :refer [RefMenuItem refs-menu]]
             [app.queries :refer [txbind]]))
 
-(enable-console-print!)
-
 (defui App
   static om/IQueryParams
   (params [this]
@@ -94,4 +92,5 @@
 
 
 (defn run []
+  (enable-console-print!)
   (om/add-root! reconciler App (gdom/getElement "app")))
