@@ -8,7 +8,7 @@
   (render [this]
     (let [{:keys [snippets]} (om/props this)
           {:keys [toggle-fn create-fn update-fn save-fn]}
-            (om/get-computed this)]
+          (om/get-computed this)]
       (dom/div #js {:className "snippet-list"}
         (dom/h2 #js {:className "snippet-list-title"}
           (dom/span #js {:className "snippet-list-title-text"} "Snippets")

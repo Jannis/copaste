@@ -2,7 +2,7 @@
   (:require [ajax.core :refer [POST]]
             [om.next :as om]
             [om.transit :as om-transit]
-            [app.queries :refer [merge-result-tree]]
+            [app.om-ext :refer [merge-result-tree]]
             [app.state :refer [initial-state]]))
 
 (defmulti read om/dispatch)
@@ -12,7 +12,6 @@
 (defn send-completed-handler [merge-fn results]
   (println "<<" results)
   (merge-fn results))
-  ; (println "copaste" (om/app-state reconciler)))
 
 (defn send-error-handler [merge-fn error]
   (println "<<" "error" error))
@@ -24,6 +23,7 @@
           {:params query
            :reader (om-transit/reader)
            :writer (om-transit/writer)
+           :response-format :transit
            :handler #(send-completed-handler merge-fn %)
            :error-handler #(send-error-handler merge-fn %)})))
 
@@ -35,4 +35,4 @@
                   :parser parser
                   :send send
                   :merge-tree merge-result-tree
-                  :migrate om/default-migrate}))
+                  :id-key :uuid}))

@@ -1,5 +1,5 @@
-(ns app.queries
-  (:require-macros app.queries)
+(ns app.om-ext
+  (:require-macros app.om-ext)
   (:require [clojure.walk :as walk]
             [om.next :as om]))
 

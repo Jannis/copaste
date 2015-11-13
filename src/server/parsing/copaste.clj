@@ -79,15 +79,13 @@
   [{:keys [consonant]} _ {:keys [ref snippet]}]
   (let [snippet (om->object snippet)
         uuid (:uuid snippet)
-        real-uuid (cond-> uuid(instance? TempId uuid) (-> :id str))]
-    (println "uuid" uuid)
-    (println "real-uuid" real-uuid)
+        real-uuid (cond-> uuid (instance? TempId uuid) (-> :id str))]
     {:value {:keys [:copaste/refs :copaste/snippets]
              :tempids {[:snippet/by-uuid uuid]
                        [:snippet/by-uuid real-uuid]}}
-     :action
-     (fn []
-       (let [ref (if ref ref (s/get-ref consonant "HEAD"))]
-         (if (= uuid real-uuid)
-           (update-snippet consonant ref snippet)
-           (create-snippet consonant ref (assoc snippet :uuid real-uuid)))))}))
+     :action (fn []
+              (let [ref (if ref ref (s/get-ref consonant "HEAD"))]
+                (if (= uuid real-uuid)
+                  (update-snippet consonant ref snippet)
+                  (create-snippet consonant ref
+                                  (assoc snippet :uuid real-uuid)))))}))

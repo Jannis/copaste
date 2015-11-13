@@ -29,9 +29,16 @@
     (println ">>" ret)
     (response ret)))
 
+(defn handle-echo [params]
+  (println "<<" params (type params))
+  (println ">>" params)
+  (response params))
+
 (defroutes backend-routes
   (OPTIONS "/query" {params :body-params} (handle-query params))
   (POST    "/query" {params :body-params} (handle-query params))
+  (OPTIONS "/echo"  {params :body-params} (handle-echo params))
+  (POST    "/echo"  {params :body-params} (handle-echo params))
   (route/not-found "Not found"))
 
 (defn make-om-transit-decoder []

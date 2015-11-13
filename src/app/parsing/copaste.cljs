@@ -34,9 +34,13 @@
                                      :property/code ""
                                      :app/editing true})
                           (update :copaste/snippets conj ident)))))
-       (println "new state" @state))})
+     (println "new state" @state))})
 
 (defmethod mutate 'copaste/save-snippet
  [{:keys [state]} _ {:keys [ref snippet]}]
  {:value {:keys [:copaste/refs :copaste/snippets]}
+  :action #(swap! state update-in [:snippet/by-uuid (:uuid snippet)]
+                  (fn [props] (-> props
+                                  (assoc :app/editing false)
+                                  (assoc :app/expanded false))))
   :remote true})

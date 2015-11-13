@@ -8,7 +8,7 @@
             [app.components.snippet :refer [Snippet]]
             [app.components.snippet-list :refer [snippet-list]]
             [app.components.refs-menu :refer [RefMenuItem refs-menu]]
-            [app.queries :refer [txbind]]))
+            [app.om-ext :refer [txbind]]))
 
 (defui App
   static om/IQueryParams
@@ -50,8 +50,7 @@
                        (first))]
       (om/transact!
         this (txbind this `[(copaste/save-snippet {:ref ~ref :snippet ~snippet})
-                            :copaste/refs
-                            :copaste/snippets]))))
+                            :copaste/refs]))))
 
   (render [this]
     (println "Render App")
@@ -84,15 +83,6 @@
                           :create-fn #(.create-snippet this %)
                           :update-fn #(.update-snippet this %1 %2)
                           :save-fn #(.save-snippet this %1)})))))))
-        ; (when-let [sn (:app/snippet (om/props this))]
-        ;   (println "SN" sn)
-        ;   (if-let [edit (:app/edit-snippet (om/props this))]
-        ;     (snippet-editor
-        ;       (om/computed sn
-        ;                    {:save-fn #(.save-snippet this)
-        ;                     :update-fn #(.update-snippet this %)}))
-        ;     (snippet sn)))))))
-
 
 (defn run []
   (enable-console-print!)

@@ -31,15 +31,6 @@
   {:value {:keys [:copaste/snippets]}
    :action #(swap! state update-in (conj ident :app/expanded) not)})
 
-; (defmethod mutate 'app/create-snippet
-;   [{:keys [state]} _ _]
-;   {:value {:keys [:app/snippet :app/edit-snippet]}
-;    :action
-;    (fn []
-;      (swap! state (fn [st] (-> st
-;                                (assoc :app/snippet {:uuid nil})
-;                                (assoc :app/edit-snippet true)))))})
-
 (defmethod mutate 'app/update-snippet
   [{:keys [state]} _ {:keys [ident props]}]
   {:value {:keys [ident]}

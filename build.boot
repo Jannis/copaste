@@ -26,8 +26,10 @@
                   ; App dependencies
                   [cljs-ajax "0.5.1"]
                   [cljsjs/highlight "8.4-0"]
+                  [com.cognitect/transit-cljs "0.8.232"]
                   [org.clojure/clojurescript "1.7.170"]
-                  [org.omcljs/om "1.0.0-alpha21-SNAPSHOT"]
+                  [org.omcljs/om "1.0.0-alpha22-SNAPSHOT"]
+
 
                   ; Other dependencies
                   [devcards "0.2.0-8"]])
