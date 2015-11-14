@@ -3,6 +3,11 @@
             [om.dom :as dom]
             [app.components.snippet :refer [snippet]]))
 
+(defn sort-snippets [snippets]
+  (sort-by :uuid
+           (fn [id1 id2] (instance? om.tempid/TempId id1))
+           snippets))
+
 (defui SnippetList
   Object
   (render [this]
@@ -16,7 +21,7 @@
             (dom/button #js {:className "snippet-list-title-button"
                              :onClick #(when create-fn (create-fn))}
               "+ Create")))
-        (for [sn snippets]
+        (for [sn (sort-snippets (reverse snippets))]
           (snippet (om/computed sn {:toggle-fn toggle-fn
                                     :update-fn update-fn
                                     :save-fn save-fn})))))))

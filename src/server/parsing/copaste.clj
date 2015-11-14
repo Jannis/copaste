@@ -39,6 +39,11 @@
 
 ;;;; Reads
 
+(defmethod readf :copaste/ref
+  [{:keys [consonant query]} _ {:keys [ident]}]
+  {:value (->> (s/get-ref consonant (or (second ident) "HEAD"))
+               (#(select-keys % query)))})
+
 (defmethod readf :copaste/refs
   [{:keys [consonant query]} _ _]
   {:value (->> (s/get-refs consonant)
@@ -48,7 +53,7 @@
 
 (defmethod readf :copaste/snippets
   [{:keys [consonant query]} _ {:keys [ref]}]
-  {:value (->> (s/get-objects consonant (second ref) "snippet")
+  {:value (->> (s/get-objects consonant (or (second ref) "HEAD") "snippet")
                (map object->om)
                (map #(select-keys % query))
                (into []))})

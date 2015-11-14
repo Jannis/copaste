@@ -28,7 +28,7 @@
 
 (defmethod mutate 'app/toggle-expanded
   [{:keys [state]} _ {:keys [ident]}]
-  {:value {:keys [:copaste/snippets]}
+  {:value {:keys [ident]}
    :action #(swap! state update-in (conj ident :app/expanded) not)})
 
 (defmethod mutate 'app/update-snippet

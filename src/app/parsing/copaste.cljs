@@ -2,6 +2,12 @@
   (:require [om.next :as om]
             [app.reconciler :refer [mutate read]]))
 
+(defmethod read :copaste/ref
+  [{:keys [state query]} _ {:keys [ident]}]
+  (let [st @state]
+    {:value (get-in st ident)
+     :remote true}))
+
 (defmethod read :copaste/refs
   [{:keys [state query]} key _]
   (let [st @state]
@@ -16,8 +22,9 @@
 
 (defmethod read :copaste/snippets
   [{:keys [state query]} key _]
-  {:value (let [st @state] (om/db->tree query (get st key) st))
-   :remote true})
+  (let [st @state]
+    {:value (let [st @state] (om/db->tree query (get st key) st))
+     :remote true}))
 
 (defmethod mutate 'copaste/create-snippet
   [{:keys [state]} _ _]
@@ -33,8 +40,7 @@
                                      :property/title ""
                                      :property/code ""
                                      :app/editing true})
-                          (update :copaste/snippets conj ident)))))
-     (println "new state" @state))})
+                          (update :copaste/snippets conj ident))))))})
 
 (defmethod mutate 'copaste/save-snippet
  [{:keys [state]} _ {:keys [ref snippet]}]

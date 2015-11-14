@@ -121,30 +121,6 @@
             [om.next :as om :refer-macros [defui]]
             [om.dom :as dom]))
 
-; (defui Snippet
-;   static om/Ident
-;   (ident [this props]
-;     [:snippet/by-uuid (:uuid props)])
-;   static om/IQuery
-;   (query [this]
-;     [:uuid :app/expanded :property/title :property/code])
-;   Object
-;   (render [this]
-;     (println "Render Snippet" (:uuid (om/props this)) (:app/expanded (om/props this)))
-;     (let [{:keys [uuid app/expanded property/title]} (om/props this)
-;           {:keys [toggle-fn]} (om/get-computed this)]
-;       (dom/div #js {:className "snippet"
-;                     :onClick #(when toggle-fn
-;                                 (toggle-fn (om/get-ident this)))}
-;         (dom/div #js {:className "snippet-header"}
-;           (dom/span #js {:className "snippet-id"} (subs uuid 0 8))
-;           (dom/span #js {:className "snippet-title"} title))
-;         (dom/div #js {:className" snippet-snippet"}
-;           (if expanded
-;             (snippet (om/computed (om/props this) {}))))))))
-;
-; (def snippet (om/factory Snippet {:keyfn :uuid}))
-
 (defui Snippet
   static om/Ident
   (ident [this props]
@@ -170,8 +146,10 @@
         (dom/div #js {:className "snippet-header"
                       :onClick #(when toggle-fn
                                   (toggle-fn (om/get-ident this)))}
-          (dom/span #js {:className "snippet-id"}
-            (when (string? uuid) (subs uuid 0 8)))
+          (if editing
+            (dom/span #js {:className "snippet-id"} "Title:")
+            (dom/span #js {:className "snippet-id"}
+              (when (string? uuid) (subs uuid 0 8))))
           (if editing
             (dom/input #js {:className "snippet-title-input"
                             :value title
