@@ -141,7 +141,7 @@
     (println "Render Snippet" (:uuid (om/props this)))
     (let [{:keys [uuid property/title property/code]} (om/props this)
           {:keys [app/editing app/expanded]} (om/props this)
-          {:keys [toggle-fn save-fn update-fn]} (om/get-computed this)]
+          {:keys [toggle-fn save-fn edit-fn update-fn]} (om/get-computed this)]
       (dom/div #js {:className "snippet"}
         (dom/div #js {:className "snippet-header"
                       :onClick #(when toggle-fn
@@ -160,21 +160,27 @@
                                   (update-fn (om/get-ident this)
                                              {:property/title title})))
                               (.preventDefault e))})
-            (dom/span #js {:className "snippet-title"} title)))
+            (dom/span #js {:className "snippet-title"} title))
+          (dom/span #js {:className "snippet-header-buttons"}
+            (dom/button #js {:className "snippet-header-button"
+                            :onClick #(when edit-fn
+                                        (edit-fn (om/get-ident this)))}
+              (if editing "Cancel editing" "Edit"))
+            (when editing
+              (dom/button #js {:className "snippet-header-button"
+                             :onClick #(when save-fn
+                                         (save-fn (om/get-ident this)))}
+                "Save"))))
         (if editing
           (dom/div #js {:className "snippet-form"}
             (dom/textarea #js {:className "snippet-code-input"
+                               :value code
                                :onChange
                                (fn [e]
                                  (when update-fn
                                    (let [code (.. e -target -value)]
                                      (update-fn (om/get-ident this)
-                                                {:property/code code}))))})
-            (dom/div #js {:className "snippet-code-buttons"}
-              (dom/button #js {:className "snippet-code-button"
-                               :onClick #(when save-fn
-                                           (save-fn (om/get-ident this)))}
-                "Save")))
+                                                {:property/code code}))))}))
           (when expanded
             (dom/pre #js {:className "snippet-code"}
               (dom/code #js {:ref :code} code))))))))

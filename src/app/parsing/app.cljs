@@ -31,6 +31,11 @@
   {:value {:keys [ident]}
    :action #(swap! state update-in (conj ident :app/expanded) not)})
 
+(defmethod mutate 'app/toggle-editing
+  [{:keys [state]} _ {:keys [ident]}]
+  {:value {:keys [ident]}
+   :action #(swap! state update-in (conj ident :app/editing) not)})
+
 (defmethod mutate 'app/update-snippet
   [{:keys [state]} _ {:keys [ident props]}]
   {:value {:keys [ident]}
