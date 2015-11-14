@@ -1,6 +1,8 @@
 (ns app.om-ext
+  (:import [goog.net XhrIo])
   (:require-macros app.om-ext)
   (:require [clojure.walk :as walk]
+            [cognitect.transit :as transit]
             [om.next :as om]))
 
 (defn txbind [c tx]
@@ -32,3 +34,22 @@
               (merge-with #(merge-tree %1 %2) a b)
               b))]
     (merge-tree a b)))
+
+(defn- transit-post [url data cb]
+  (.send XhrIo url
+    (fn [e]
+      (this-as this
+        (cb (transit/read (om.transit/reader) (.getResponseText this)))))
+    "POST"
+    (transit/write (om.transit/writer) data)
+    #js {"Content-Type" "application/transit+json"}))
+
+(defn send-to-remotes [remotes sends merge-fn]
+  (println ">> send" remotes "sends" sends)
+  (doseq [[remote query] sends]
+    (transit-post (get-in remotes [remote :url])
+                  query
+                  (fn [data]
+                    (let [remote-cb (get-in remotes [remote :callback])]
+                      (when remote-cb
+                        (remote-cb data merge-fn)))))))
