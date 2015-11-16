@@ -8,9 +8,9 @@
 (defsystem development-system
   [:app-server (new-web-server 3000 app-server)
    :backend-server (new-web-server 3001 backend-server)
-   :consonant (new-local-store "/home/jannis/tmp/copaste-store.git")])
+   :consonant (new-local-store "/tmp/copaste-store.git")])
 
 (defsystem production-system
   [:app-server (new-web-server 3000 app-server)
    :backend-server (new-web-server 3001 backend-server)
-   :consonant (new-local-store "/home/jannis/tmp/copaste-store.git")])
+   :consonant (new-local-store "/tmp/copaste-store.git")])
