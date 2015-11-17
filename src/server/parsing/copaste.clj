@@ -69,6 +69,15 @@
                   :committer {:name "copaste" :email "copaste@copaste.org"}
                   :message (str "Update snippet " (:uuid snippet))))))
 
+(defn delete-snippet [consonant ref ident]
+  (t/transact! consonant
+    (-> (t/begin :source (some-> ref :head :sha1))
+        (t/delete :uuid (second ident))
+        (t/commit :target (if ref (:name ref) "HEAD")
+                  :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
+                  :committer {:name "copaste" :email "copaste@copaste.org"}
+                  :message (str "Delete snippet" (second ident))))))
+
 (defn create-snippet [consonant ref snippet]
   (t/transact! consonant
     (-> (t/begin :source (some-> ref :head :sha1))
@@ -79,6 +88,13 @@
                   :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
                   :committer {:name "copaste" :email "copaste@copaste.org"}
                   :message "Create snippet"))))
+
+(defmethod mutatef 'copaste/delete-snippet
+  [{:keys [consonant]} _ {:keys [ref ident]}]
+  {:value {:keys [:copaste/refs :copaste/snippets (when ref ref) ident]}
+   :action (fn []
+             (let [ref (if ref ref (s/get-ref consonant "HEAD"))]
+               (delete-snippet consonant ref ident)))})
 
 (defmethod mutatef 'copaste/save-snippet
   [{:keys [consonant]} _ {:keys [ref snippet]}]

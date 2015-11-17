@@ -20,6 +20,11 @@
        (conj (:actions ta))
        (->Transaction)))
 
+(defn delete [ta & options]
+  (->> (apply actions/delete options)
+       (conj (:actions ta))
+       (->Transaction)))
+
 (defn update [ta & options]
   (->> (apply actions/update options)
        (conj (:actions ta))

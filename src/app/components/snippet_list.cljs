@@ -12,7 +12,7 @@
   Object
   (render [this]
     (let [{:keys [snippets]} (om/props this)
-          {:keys [toggle-fn create-fn edit-fn update-fn save-fn]}
+          {:keys [toggle-fn create-fn edit-fn delete-fn update-fn save-fn]}
           (om/get-computed this)]
       (dom/div #js {:className "snippet-list"}
         (dom/h2 #js {:className "snippet-list-title"}
@@ -24,6 +24,7 @@
         (for [sn (sort-snippets (reverse snippets))]
           (snippet (om/computed sn {:toggle-fn toggle-fn
                                     :edit-fn edit-fn
+                                    :delete-fn delete-fn
                                     :update-fn update-fn
                                     :save-fn save-fn})))))))
 

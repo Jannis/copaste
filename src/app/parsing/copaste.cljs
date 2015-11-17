@@ -42,11 +42,17 @@
                                      :app/editing true})
                           (update :copaste/snippets conj ident))))))})
 
+(defmethod mutate 'copaste/delete-snippet
+  [{:keys [state]} _ {:keys [ref ident]}]
+  {:value {:keys [ref ident]}
+   :remote true})
+
 (defmethod mutate 'copaste/save-snippet
  [{:keys [state]} _ {:keys [ref snippet]}]
- {:value {:keys [:copaste/refs :copaste/snippets]}
-  :action #(swap! state update-in [:snippet/by-uuid (:uuid snippet)]
-                  (fn [props] (-> props
+ (let [ident [:snippet/by-uuid (:uuid snippet)]]
+   {:value {:keys [ref ident]}
+    :action #(swap! state update-in ident
+                    (fn [props] (-> props
                                   (assoc :app/editing false)
                                   (assoc :app/expanded false))))
-  :remote true})
+    :remote true}))

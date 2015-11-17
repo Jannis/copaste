@@ -37,6 +37,15 @@
   (create-snippet [this]
     (om/transact! this `[(copaste/create-snippet)]))
 
+  (delete-snippet [this ident]
+    (let [ref (:app/ref (om/props this))]
+      (println "ref" ref)
+      (om/transact! this
+                    `[(copaste/delete-snippet {:ref ~ref :ident ~ident})
+                      :copaste/ref
+                      :copaste/refs
+                      :copaste/snippets])))
+
   (toggle-editing [this ident]
     (om/transact! this `[(app/toggle-editing {:ident ~ident})]))
 
@@ -71,6 +80,7 @@
             (om/computed {:snippets snippets}
                          {:toggle-fn #(.toggle-expanded this %)
                           :create-fn #(.create-snippet this %)
+                          :delete-fn #(.delete-snippet this %)
                           :edit-fn #(.toggle-editing this %)
                           :update-fn #(.update-snippet this %1 %2)
                           :save-fn #(.save-snippet this %1)})))))))

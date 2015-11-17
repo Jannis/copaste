@@ -141,7 +141,8 @@
     (println "Render Snippet" (:uuid (om/props this)))
     (let [{:keys [uuid property/title property/code]} (om/props this)
           {:keys [app/editing app/expanded]} (om/props this)
-          {:keys [toggle-fn save-fn edit-fn update-fn]} (om/get-computed this)]
+          {:keys [toggle-fn save-fn edit-fn delete-fn update-fn]}
+            (om/get-computed this)]
       (dom/div #js {:className "snippet"}
         (dom/div #js {:className "snippet-header"
                       :onClick #(when toggle-fn
@@ -162,6 +163,10 @@
                               (.preventDefault e))})
             (dom/span #js {:className "snippet-title"} title))
           (dom/span #js {:className "snippet-header-buttons"}
+            (dom/button #js {:className "snippet-header-button"
+                             :onClick #(when delete-fn
+                                         (delete-fn (om/get-ident this)))}
+              "Delete")
             (dom/button #js {:className "snippet-header-button"
                             :onClick #(when edit-fn
                                         (edit-fn (om/get-ident this)))}
