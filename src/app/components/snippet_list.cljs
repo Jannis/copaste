@@ -21,7 +21,7 @@
             (dom/button #js {:className "snippet-list-title-button"
                              :onClick #(when create-fn (create-fn))}
               "+ Create")))
-        (for [sn (sort-snippets (reverse snippets))]
+        (for [sn (sort-snippets snippets)]
           (snippet (om/computed sn {:toggle-fn toggle-fn
                                     :edit-fn edit-fn
                                     :delete-fn delete-fn
