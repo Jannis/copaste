@@ -1,8 +1,8 @@
 (ns server.parsing.copaste
   (:import [om.tempid TempId])
-  (:require [clj-consonant.store :as s]
-            [server.parser :refer [mutatef readf]]
-            [server.transaction :as t]))
+  (:require [clj-consonant.actions :as a]
+            [clj-consonant.store :as s]
+            [server.parser :refer [mutatef readf]]))
 
 ;;;; Prepare Consonant objects for Om
 
@@ -61,33 +61,33 @@
 ;;;; Mutations
 
 (defn update-snippet [consonant ref snippet]
-  (t/transact! consonant
-    (-> (t/begin :source (some-> ref :head :sha1))
-        (t/update :uuid (:uuid snippet) :properties (:properties snippet))
-        (t/commit :target (if ref (:name ref) "HEAD")
-                  :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
-                  :committer {:name "copaste" :email "copaste@copaste.org"}
-                  :message (str "Update snippet " (:uuid snippet))))))
+  (s/transact! consonant
+    (-> (a/begin {:source (some-> ref :head :sha1)})
+        (a/update {:uuid (:uuid snippet) :properties (:properties snippet)})
+        (a/commit {:target (if ref (:name ref) "HEAD")
+                   :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
+                   :committer {:name "copaste" :email "copaste@copaste.org"}
+                   :message (str "Update snippet " (:uuid snippet))}))))
 
 (defn delete-snippet [consonant ref ident]
-  (t/transact! consonant
-    (-> (t/begin :source (some-> ref :head :sha1))
-        (t/delete :uuid (second ident))
-        (t/commit :target (if ref (:name ref) "HEAD")
-                  :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
-                  :committer {:name "copaste" :email "copaste@copaste.org"}
-                  :message (str "Delete snippet" (second ident))))))
+  (s/transact! consonant
+    (-> (a/begin {:source (some-> ref :head :sha1)})
+        (a/delete {:uuid (second ident)})
+        (a/commit {:target (if ref (:name ref) "HEAD")
+                   :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
+                   :committer {:name "copaste" :email "copaste@copaste.org"}
+                   :message (str "Delete snippet" (second ident))}))))
 
 (defn create-snippet [consonant ref snippet]
-  (t/transact! consonant
-    (-> (t/begin :source (some-> ref :head :sha1))
-        (t/create :class "snippet"
-                  :uuid (:uuid snippet)
-                  :properties (:properties snippet))
-        (t/commit :target (if ref (:name ref) "HEAD")
-                  :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
-                  :committer {:name "copaste" :email "copaste@copaste.org"}
-                  :message "Create snippet"))))
+  (s/transact! consonant
+    (-> (a/begin {:source (some-> ref :head :sha1)})
+        (a/create {:class "snippet"
+                   :uuid (:uuid snippet)
+                   :properties (:properties snippet)})
+        (a/commit {:target (if ref (:name ref) "HEAD")
+                   :author {:name "Jannis Pohlmann" :email "jannis@xfce.org"}
+                   :committer {:name "copaste" :email "copaste@copaste.org"}
+                   :message "Create snippet"}))))
 
 (defmethod mutatef 'copaste/delete-snippet
   [{:keys [consonant]} _ {:keys [ref ident]}]
